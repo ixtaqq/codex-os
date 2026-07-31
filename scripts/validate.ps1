@@ -32,7 +32,9 @@ $requiredFiles = @(
     'AGENTS.md', 'README.md', 'SPEC.md', 'ROADMAP.md', 'TASKS.md',
     '.codex-plugin\plugin.json', 'global\AGENTS.md', 'vendor\enabled.txt',
     'scripts\doctor.ps1', 'scripts\loop.ps1', 'scripts\sync.ps1',
-    'scripts\validate.ps1', 'scripts\schemas\loop-status.schema.json'
+    'scripts\validate.ps1', 'scripts\schemas\loop-status.schema.json',
+    'codex-home\agents\explorer.toml', 'codex-home\agents\reviewer.toml',
+    'codex-home\agents\docs-researcher.toml'
 )
 foreach ($file in $requiredFiles) { Test-RequiredFile $file }
 

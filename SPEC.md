@@ -15,6 +15,8 @@ explicit workflows, bounded loops, durable memory, and safe installation wiring.
 - Give loops explicit exit conditions, budgets, and resumable session identity.
 - Validate skill metadata, loop definitions, vendor selections, and repository shape.
 - Preserve project-specific instructions instead of replacing them with global defaults.
+- Treat vendored upstream skills as reviewable dependencies; enable only selected skills whose
+  harness assumptions match Codex.
 
 ## Boundaries
 

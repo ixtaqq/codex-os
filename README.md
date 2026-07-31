@@ -50,6 +50,7 @@ later passes, so concurrent Codex work cannot be picked up by accident.
 | `loops/` | Loop definitions (`*.loop.md`) for headless, repeating work |
 | `scripts/` | `sync`, `doctor`, `loop`, `schedule-loop`, plus the loop status schema |
 | `SPEC.md`, `ROADMAP.md`, `TASKS.md` | Requirements, phase boundaries, and validated work |
+| `codex-home/agents/` | Read-only Codex role layers copied into `~/.codex/agents/` |
 | `templates/` | Starters: project `AGENTS.md`, project `.codex/config.toml`, new skill |
 | `vendor/` | Third-party skill repos, cloned as-is. `enabled.txt` picks which ones go live |
 | `memory/` | Durable decisions — one fact per file, `INDEX.md` on top |
@@ -68,9 +69,11 @@ later passes, so concurrent Codex work cannot be picked up by accident.
 ## Vendored skills
 
 `vendor/` holds upstream skill repos; `vendor/enabled.txt` decides which are junctioned into
-`~/.codex/skills`. **36 are live** — mattpocock's `engineering/` + `productivity/`, karpathy's
-guidelines, and all of taste-skill. Hyperframes is vendored but off; every skill in it needs the
-hyperframes CLI and Remotion.
+`~/.codex/skills`. **42 vendored skills are live** — mattpocock's `engineering/` + `productivity/`,
+karpathy's guidelines, all of taste-skill, and six curated ECC skills for verification, loops,
+GitHub operations, security, repository scanning, and skill audits. ECC's unified-memory skill is
+vendored but off because `memory-keeper` remains the canonical memory system here. Hyperframes is
+vendored but off; every skill in it needs the hyperframes CLI and Remotion.
 
 Enable or disable by editing `enabled.txt`, then:
 

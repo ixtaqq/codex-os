@@ -15,6 +15,7 @@ Vendored repos are not tracked by this repo's git (`.gitignore` keeps only `READ
 | `andrej-karpathy-skills/` | https://github.com/multica-ai/andrej-karpathy-skills | 1 | enabled |
 | `taste-skill/` | https://github.com/leonxlnx/taste-skill | 13 | all enabled; design/UI taste and imagegen |
 | `hyperframes/` | https://github.com/heygen-com/hyperframes | 19 | **all disabled.** Sparse checkout of `skills/` only (30 MB of an 808 MB repo). Needs the hyperframes CLI + Remotion toolchain to be useful |
+| `ecc/` | https://github.com/affaan-m/ECC | 6 | curated Codex-compatible skills enabled; unified-memory, Claude hooks, and full catalog left off |
 
 ## Enabling and disabling
 
@@ -50,4 +51,5 @@ git clone --depth 1 https://github.com/multica-ai/andrej-karpathy-skills andrej-
 git clone --depth 1 https://github.com/leonxlnx/taste-skill taste-skill
 git clone --depth 1 --filter=blob:none --sparse https://github.com/heygen-com/hyperframes hyperframes
 git -C hyperframes sparse-checkout set skills
+git clone --depth 1 https://github.com/affaan-m/ECC.git ecc
 ```

@@ -161,6 +161,48 @@ foreach ($linkName in ($vendorWanted.Keys | Sort-Object)) {
     }
 }
 
+# --- Codex agent roles: copied, because ~/.codex/agents is not a skill junction ------------------
+
+$agentsSrcRoot  = Join-Path $root 'codex-home\agents'
+$agentsDestRoot = Join-Path $codexHome 'agents'
+
+if (Test-Path -LiteralPath $agentsSrcRoot -PathType Container) {
+    if (-not (Test-Path -LiteralPath $agentsDestRoot -PathType Container)) {
+        if ($DryRun) {
+            Add-Result 'agents/' 'would create' $agentsDestRoot
+        } else {
+            New-Item -ItemType Directory -Path $agentsDestRoot -Force | Out-Null
+        }
+    }
+
+    foreach ($agent in (Get-ChildItem -LiteralPath $agentsSrcRoot -Filter '*.toml' -File)) {
+        $dest = Join-Path $agentsDestRoot $agent.Name
+        if (-not (Test-Path -LiteralPath $dest -PathType Leaf)) {
+            if ($DryRun) {
+                Add-Result $agent.Name 'would copy' 'agent role'
+            } else {
+                Copy-Item -LiteralPath $agent.FullName -Destination $dest
+                Add-Result $agent.Name 'copied' 'agent role'
+            }
+            continue
+        }
+
+        $srcHash  = Get-FileHashOrNull $agent.FullName
+        $destHash = Get-FileHashOrNull $dest
+        if ($srcHash -eq $destHash) {
+            Add-Result $agent.Name 'ok' 'agent role current'
+        } elseif (-not $Force) {
+            Add-Result $agent.Name 'DRIFT' 'installed role differs -- re-run with -Force to overwrite'
+        } elseif ($DryRun) {
+            Add-Result $agent.Name 'would overwrite' 'agent role differs'
+        } else {
+            Copy-Item -LiteralPath $dest -Destination "$dest.bak" -Force
+            Copy-Item -LiteralPath $agent.FullName -Destination $dest -Force
+            Add-Result $agent.Name 'updated' 'previous role saved as .bak'
+        }
+    }
+}
+
 # Links into vendor/ that enabled.txt no longer lists. Removing a junction never touches the files
 # it points at, but it is still a removal, so it needs -Force.
 foreach ($dest in (Get-ChildItem -Path $skillsDest -Directory -Force -ErrorAction SilentlyContinue)) {

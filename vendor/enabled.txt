@@ -67,3 +67,11 @@ taste-skill/skills/taste-skill
 # hyperframes/skills/remotion-to-hyperframes
 # hyperframes/skills/slideshow
 # hyperframes/skills/talking-head-recut
+
+# --- affaan-m/ECC : curated Codex-compatible skills ---
+ecc/skills/autonomous-loops
+ecc/skills/github-ops
+ecc/skills/repo-scan
+ecc/skills/security-review
+ecc/skills/skill-stocktake
+ecc/skills/verification-loop
