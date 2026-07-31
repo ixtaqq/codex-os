@@ -1,0 +1,69 @@
+﻿# Vendor skills enabled for linking into ~/.codex/skills.
+# One path per line, relative to vendor/. Blank lines and # comments ignored.
+# The link name comes from the SKILL.md frontmatter 'name', falling back to the folder name.
+# Comment a line out to disable that skill; then run scripts\sync.ps1 -Force.
+
+# --- mattpocock/skills : engineering ---
+mattpocock-skills/skills/engineering/ask-matt
+mattpocock-skills/skills/engineering/code-review
+mattpocock-skills/skills/engineering/codebase-design
+mattpocock-skills/skills/engineering/diagnosing-bugs
+mattpocock-skills/skills/engineering/domain-modeling
+mattpocock-skills/skills/engineering/grill-with-docs
+mattpocock-skills/skills/engineering/implement
+mattpocock-skills/skills/engineering/improve-codebase-architecture
+mattpocock-skills/skills/engineering/prototype
+mattpocock-skills/skills/engineering/research
+mattpocock-skills/skills/engineering/resolving-merge-conflicts
+mattpocock-skills/skills/engineering/setup-matt-pocock-skills
+mattpocock-skills/skills/engineering/tdd
+mattpocock-skills/skills/engineering/to-spec
+mattpocock-skills/skills/engineering/to-tickets
+mattpocock-skills/skills/engineering/triage
+mattpocock-skills/skills/engineering/wayfinder
+
+# --- mattpocock/skills : productivity ---
+mattpocock-skills/skills/productivity/grill-me
+mattpocock-skills/skills/productivity/grilling
+mattpocock-skills/skills/productivity/handoff
+mattpocock-skills/skills/productivity/teach
+mattpocock-skills/skills/productivity/writing-great-skills
+
+# --- multica-ai/andrej-karpathy-skills ---
+andrej-karpathy-skills/skills/karpathy-guidelines
+
+# --- leonxlnx/taste-skill ---
+taste-skill/skills/brandkit
+taste-skill/skills/brutalist-skill
+taste-skill/skills/gpt-tasteskill
+taste-skill/skills/image-to-code-skill
+taste-skill/skills/imagegen-frontend-mobile
+taste-skill/skills/imagegen-frontend-web
+taste-skill/skills/minimalist-skill
+taste-skill/skills/output-skill
+taste-skill/skills/redesign-skill
+taste-skill/skills/soft-skill
+taste-skill/skills/stitch-skill
+taste-skill/skills/taste-skill-v1
+taste-skill/skills/taste-skill
+
+# --- heygen-com/hyperframes : vendored but OFF (needs the hyperframes CLI + Remotion) ---
+# hyperframes/skills/embedded-captions
+# hyperframes/skills/faceless-explainer
+# hyperframes/skills/figma
+# hyperframes/skills/general-video
+# hyperframes/skills/hyperframes-animation
+# hyperframes/skills/hyperframes-cli
+# hyperframes/skills/hyperframes-core
+# hyperframes/skills/hyperframes-creative
+# hyperframes/skills/hyperframes-keyframes
+# hyperframes/skills/hyperframes-registry
+# hyperframes/skills/hyperframes
+# hyperframes/skills/media-use
+# hyperframes/skills/motion-graphics
+# hyperframes/skills/music-to-video
+# hyperframes/skills/pr-to-video
+# hyperframes/skills/product-launch-video
+# hyperframes/skills/remotion-to-hyperframes
+# hyperframes/skills/slideshow
+# hyperframes/skills/talking-head-recut

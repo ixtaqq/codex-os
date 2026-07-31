@@ -1,0 +1,25 @@
+{
+  "name": "codex-os",
+  "version": "0.1.0",
+  "description": "Personal Codex operating system: reusable skills, loop automations, project templates, and durable memory.",
+  "author": {
+    "name": "ixtaqq"
+  },
+  "license": "MIT",
+  "keywords": ["workflow", "automation", "loops", "personal"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Codex OS",
+    "shortDescription": "Personal skills, loops, and standards",
+    "longDescription": "A personal operating system for Codex. Bundles reusable skills (loop-runner, project-bootstrap, memory-keeper, ship-check), headless loop automations driven by codex exec, project templates, and a durable memory store shared across every project.",
+    "developerName": "ixtaqq",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "defaultPrompt": [
+      "Bootstrap this repo with an AGENTS.md",
+      "Run ship-check on my current changes",
+      "Loop on the test suite until it passes"
+    ],
+    "brandColor": "#3B82F6"
+  }
+}

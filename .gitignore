@@ -1,0 +1,11 @@
+logs/
+
+# Vendored upstream repos: reproducible from vendor/README.md, and each has its own .git
+vendor/*
+!vendor/README.md
+!vendor/enabled.txt
+
+*.local.*
+*.local
+.DS_Store
+Thumbs.db
