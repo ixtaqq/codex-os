@@ -62,6 +62,11 @@ every pass returns `{status, summary, next_action}` as JSON. The runner reads `s
 `logs/<loop>/<run-timestamp>/iter-N.json`, with a human log alongside it. It records the session ID
 emitted by the first pass and resumes that exact session; it never uses a global last-session selector.
 
+For multi-story implementation work, add `story_ledger` and `verification_command` to the loop
+definition. Story mode selects one pending story per pass, forces a fresh Codex context, and marks
+the story complete only after the runner's verification command exits zero. The model cannot mark
+its own work complete, edit the ledger, commit, or push. Start from `templates/story-ledger.json`.
+
 To schedule a loop:
 
 ```powershell
@@ -80,6 +85,9 @@ Copy an existing `.loop.md`, then check three things:
   for anything that edits files. Never bypass approvals.
 
 Keep the prompt body outcome-shaped: what should be true when it ends, what evidence proves it.
+
+In story mode, keep one small story per pass, write explicit acceptance criteria, and configure a
+deterministic `verification_command`. Do not use it for deployment, billing, live trading, or secrets.
 
 **Calling a `.ps1` from inside a loop:** use the call operator, not `-File`.
 

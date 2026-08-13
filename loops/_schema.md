@@ -13,6 +13,10 @@ profile:                       # optional, layers $CODEX_HOME/<name>.config.toml
 max_iterations: 5              # hard budget — the loop always stops here
 interval_seconds: 0            # pause between passes; 0 for back-to-back
 exit_when: <the observable condition that ends the loop>
+# Optional story mode:
+story_ledger: tasks/stories.json
+verification_command: npm.cmd test
+fresh_context_per_iteration: true
 ---
 
 The prompt for pass one. Say what to do, and name the exact command that proves progress.
@@ -30,6 +34,12 @@ The prompt for pass one. Say what to do, and name the exact command that proves 
   thing you are watching actually changes — one 5-minute check beats five 1-minute checks.
 
 ## What each pass returns
+
+Story mode is enabled by `story_ledger`. The runner selects one pending story by numeric priority,
+forces a fresh Codex context, and owns status updates. `verification_command` is required and must
+exit zero before the runner persists completion. The agent must not edit the ledger, commit, or
+push. Start from `templates/story-ledger.json`; keep each story small and its acceptance criteria
+observable. Do not use unattended story mode for deployment, billing, live trading, or secrets.
 
 The runner passes `scripts/schemas/loop-status.schema.json` as `--output-schema`, so each pass ends
 with:

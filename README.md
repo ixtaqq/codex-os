@@ -40,6 +40,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File E:\Workspace\codex-os\script
 `-IntervalSeconds`. Each loop run records its Codex session ID and resumes that exact session on
 later passes, so concurrent Codex work cannot be picked up by accident.
 
+Optional story-ledger mode uses one fresh context per story and requires an independent verification
+command before persisting completion. See `loops/_schema.md` and `templates/story-ledger.json`.
+
 ## Layout
 
 | Path | What it is |
@@ -48,7 +51,7 @@ later passes, so concurrent Codex work cannot be picked up by accident.
 | `skills/` | Reusable workflows Codex triggers on its own — one folder each, junctioned into `~/.codex/skills` |
 | `commands/` | Prompt bodies you invoke by hand (`review`, `debug`, `ship-it`) |
 | `loops/` | Loop definitions (`*.loop.md`) for headless, repeating work |
-| `scripts/` | `sync`, `doctor`, `loop`, `schedule-loop`, plus the loop status schema |
+| `scripts/` | `sync`, `doctor`, `loop`, `story-ledger`, `schedule-loop`, plus the loop status schema |
 | `SPEC.md`, `ROADMAP.md`, `TASKS.md` | Requirements, phase boundaries, and validated work |
 | `codex-home/agents/` | Read-only Codex role layers copied into `~/.codex/agents/` |
 | `templates/` | Starters: project `AGENTS.md`, project `.codex/config.toml`, new skill |

@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "stories": [
+    {
+      "id": "STORY-001",
+      "title": "Replace with one context-sized outcome",
+      "priority": 1,
+      "status": "pending",
+      "acceptance_criteria": [
+        "Replace with an observable behavior",
+        "The loop verification command passes"
+      ]
+    }
+  ]
+}

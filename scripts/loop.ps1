@@ -58,6 +58,10 @@ $sandbox  = Get-MetaValue $meta 'sandbox' 'workspace-write'
 $model    = Get-MetaValue $meta 'model' $null
 $profileName = Get-MetaValue $meta 'profile' $null
 $exitWhen = Get-MetaValue $meta 'exit_when' '(not stated)'
+$storyLedger = Get-MetaValue $meta 'story_ledger' $null
+$verificationCommand = Get-MetaValue $meta 'verification_command' $null
+$freshContextValue = Get-MetaValue $meta 'fresh_context_per_iteration' 'false'
+$freshContext = ($freshContextValue -eq 'true')
 
 $maxIter = [int](Get-MetaValue $meta 'max_iterations' 5)
 if ($MaxIterations -gt 0) { $maxIter = $MaxIterations }
@@ -71,7 +75,19 @@ if ($sandbox -notin @('read-only', 'workspace-write', 'danger-full-access')) {
     Write-Error "Loop '$loopName' has invalid sandbox '$sandbox'."; exit 1
 }
 
+if ($storyLedger) {
+    if (-not [IO.Path]::IsPathRooted($storyLedger)) { $storyLedger = Join-Path $cwd $storyLedger }
+    if (-not (Test-Path -LiteralPath $storyLedger -PathType Leaf)) {
+        Write-Error "Loop '$loopName' story ledger does not exist: $storyLedger"; exit 1
+    }
+    if (-not $verificationCommand) {
+        Write-Error "Loop '$loopName' uses story_ledger but has no verification_command."; exit 1
+    }
+    $freshContext = $true
+}
+
 $codex = Get-CodexExe
+$ledgerScript = Join-Path $root 'scripts\story-ledger.ps1'
 
 # --- run directory -----------------------------------------------------------------------------
 
@@ -103,24 +119,54 @@ Loop control (mandatory):
 
 Write-Log "loop=$loopName cwd=$cwd sandbox=$sandbox max=$maxIter interval=${interval}s"
 Write-Log "exit_when: $exitWhen"
+if ($storyLedger) { Write-Log "story_ledger: $storyLedger"; Write-Log "verification_command: $verificationCommand" }
 
 $finalStatus = 'continue'
 $threadId = $null
 
 for ($i = 1; $i -le $maxIter; $i++) {
 
+    $currentStory = $null
+    if ($storyLedger) {
+        $storyRaw = & powershell -NoProfile -ExecutionPolicy Bypass -File $ledgerScript -Ledger $storyLedger -Action next
+        $storyCode = $LASTEXITCODE
+        if ($storyCode -eq 2) { $finalStatus = 'done'; Write-Log 'all ledger stories are complete'; break }
+        if ($storyCode -eq 3) { $finalStatus = 'blocked'; Write-Log 'story ledger has no pending work but contains blocked or invalid stories'; break }
+        if ($storyCode -ne 0) { $finalStatus = 'blocked'; Write-Log 'story ledger could not select a pending story'; break }
+        try { $currentStory = $storyRaw | ConvertFrom-Json } catch {
+            $finalStatus = 'blocked'; Write-Log 'story ledger returned invalid JSON'; break
+        }
+        Write-Log "pass $i/$maxIter -- story=$($currentStory.id) :: $($currentStory.title)"
+    }
+
     $iterFile = Join-Path $runDir ('iter-{0}.json' -f $i)
 
     $cmdArgs = New-Object System.Collections.ArrayList
     [void]$cmdArgs.Add('exec')
-    if ($i -gt 1) { [void]$cmdArgs.AddRange(@('resume', $threadId)) }
+    if ($i -gt 1 -and -not $freshContext) { [void]$cmdArgs.AddRange(@('resume', $threadId)) }
     [void]$cmdArgs.AddRange(@('-C', $cwd, '-s', $sandbox, '--skip-git-repo-check'))
     [void]$cmdArgs.AddRange(@('--output-schema', $schema, '-o', $iterFile))
-    if ($i -eq 1) { [void]$cmdArgs.Add('--json') }
+    if ($i -eq 1 -or $freshContext) { [void]$cmdArgs.Add('--json') }
     if ($model)   { [void]$cmdArgs.AddRange(@('-m', $model)) }
     if ($profileName) { [void]$cmdArgs.AddRange(@('-p', $profileName)) }
 
-    if ($i -eq 1) {
+    if ($storyLedger) {
+        $storyContract = @"
+
+---
+Current story (complete this story only):
+$($currentStory | ConvertTo-Json -Depth 10)
+
+Deterministic verification gate owned by the runner:
+- verification_command: $verificationCommand
+- Do not edit the story ledger directly.
+- Do not commit or push. The runner never authorizes git publication.
+- status=done means this story is ready for the runner to verify; it does not mark completion itself.
+"@
+        $passPrompt = $prompt + $storyContract + $contract
+    } elseif ($freshContext) {
+        $passPrompt = $prompt + "`nThis is fresh-context pass $i of $maxIter." + $contract
+    } elseif ($i -eq 1) {
         $passPrompt = $prompt + $contract
     } else {
         $passPrompt = "Continue the loop. Pass $i of $maxIter." + $contract
@@ -130,7 +176,7 @@ for ($i = 1; $i -le $maxIter; $i++) {
     if ($DryRun) {
         Write-Host "`n--- pass $i ---" -ForegroundColor Yellow
         Write-Host ('"{0}" {1} "<prompt>"' -f $codex, (($cmdArgs | Select-Object -SkipLast 1) -join ' '))
-        if ($i -eq 1) { $threadId = '<session-id from pass 1>' }
+        if ($i -eq 1 -and -not $freshContext) { $threadId = '<session-id from pass 1>' }
         continue
     }
 
@@ -148,7 +194,7 @@ for ($i = 1; $i -le $maxIter; $i++) {
 
     if ($code -ne 0) { Write-Log "pass $i -- codex exited $code" }
 
-    if ($i -eq 1) {
+    if ($i -eq 1 -and -not $freshContext) {
         foreach ($line in (Get-Content -LiteralPath $outFile -Encoding UTF8 -ErrorAction SilentlyContinue)) {
             try {
                 $event = $line | ConvertFrom-Json
@@ -188,8 +234,44 @@ for ($i = 1; $i -le $maxIter; $i++) {
     if ($next) { Write-Log "pass $i -- next: $next" }
     $finalStatus = $status
 
-    if ($status -eq 'done')    { break }
-    if ($status -eq 'blocked') { break }
+    if ($storyLedger -and $status -eq 'done') {
+        Write-Log "pass $i -- verifying story $($currentStory.id)"
+        $verifyOut = Join-Path $runDir ("verify-$i.out")
+        $verifyErr = Join-Path $runDir ("verify-$i.err")
+        Push-Location $cwd
+        try {
+            $prevEap = $ErrorActionPreference
+            $ErrorActionPreference = 'Continue'
+            & powershell -NoProfile -ExecutionPolicy Bypass -Command $verificationCommand 1> $verifyOut 2> $verifyErr
+            $verifyCode = $LASTEXITCODE
+            $ErrorActionPreference = $prevEap
+        } finally {
+            Pop-Location
+        }
+
+        if ($verifyCode -ne 0) {
+            Write-Log "pass $i -- verification failed with exit $verifyCode; story remains pending"
+            $finalStatus = 'continue'
+        } else {
+            $evidence = "verification_command passed in loop pass $i; output: $verifyOut"
+            & powershell -NoProfile -ExecutionPolicy Bypass -File $ledgerScript -Ledger $storyLedger -Action complete -StoryId $currentStory.id -VerificationExitCode 0 -Evidence $evidence | Out-Null
+            if ($LASTEXITCODE -ne 0) {
+                Write-Log "pass $i -- verification passed but ledger update failed"
+                $finalStatus = 'blocked'
+            } else {
+                Write-Log "pass $i -- story $($currentStory.id) completed with verification evidence"
+                & powershell -NoProfile -ExecutionPolicy Bypass -File $ledgerScript -Ledger $storyLedger -Action next | Out-Null
+                $nextStoryCode = $LASTEXITCODE
+                if ($nextStoryCode -eq 2) { $finalStatus = 'done' }
+                elseif ($nextStoryCode -eq 3) { $finalStatus = 'blocked' }
+                else { $finalStatus = 'continue' }
+            }
+        }
+    }
+
+    if (-not $storyLedger -and $status -eq 'done') { break }
+    if ($storyLedger -and $finalStatus -eq 'done') { break }
+    if ($finalStatus -eq 'blocked') { break }
     if ($i -lt $maxIter -and $interval -gt 0) {
         Write-Log "sleeping ${interval}s"
         Start-Sleep -Seconds $interval
