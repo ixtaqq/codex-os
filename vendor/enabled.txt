@@ -31,6 +31,20 @@ mattpocock-skills/skills/productivity/teach
 # --- multica-ai/andrej-karpathy-skills ---
 andrej-karpathy-skills/skills/karpathy-guidelines
 
+# --- davidondrej/skills : selected no-cost planning and documentation ---
+davidondrej-skills/skills/thinking-and-docs/ask-then-build
+davidondrej-skills/skills/thinking-and-docs/brain-to-docs
+davidondrej-skills/skills/thinking-and-docs/next-decision
+
+# --- addyosmani/agent-skills : selected engineering workflows ---
+addyosmani-agent-skills/skills/code-simplification
+addyosmani-agent-skills/skills/doubt-driven-development
+addyosmani-agent-skills/skills/frontend-ui-engineering
+addyosmani-agent-skills/skills/performance-optimization
+addyosmani-agent-skills/skills/source-driven-development
+# Requires the chrome-devtools MCP server, which is not currently configured.
+# addyosmani-agent-skills/skills/browser-testing-with-devtools
+
 # --- leonxlnx/taste-skill ---
 taste-skill/skills/brandkit
 taste-skill/skills/brutalist-skill

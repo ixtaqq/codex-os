@@ -72,11 +72,12 @@ command before persisting completion. See `loops/_schema.md` and `templates/stor
 ## Vendored skills
 
 `vendor/` holds upstream skill repos; `vendor/enabled.txt` decides which are junctioned into
-`~/.codex/skills`. **42 vendored skills are live** — mattpocock's `engineering/` + `productivity/`,
-karpathy's guidelines, all of taste-skill, and six curated ECC skills for verification, loops,
-GitHub operations, security, repository scanning, and skill audits. ECC's unified-memory skill is
-vendored but off because `memory-keeper` remains the canonical memory system here. Hyperframes is
-vendored but off; every skill in it needs the hyperframes CLI and Remotion.
+`~/.codex/skills`. **49 vendored skills are live** — mattpocock's `engineering/` + `productivity/`,
+karpathy's guidelines, selected planning/documentation workflows from David Ondrej, selected
+engineering workflows from Addy Osmani, all of taste-skill, and six curated ECC skills for
+verification, loops, GitHub operations, security, repository scanning, and skill audits. ECC's
+unified-memory skill is vendored but off because `memory-keeper` remains the canonical memory system
+here. Hyperframes is vendored but off; every skill in it needs the Hyperframes CLI and Remotion.
 
 Enable or disable by editing `enabled.txt`, then:
 
